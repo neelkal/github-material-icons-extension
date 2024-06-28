@@ -3,7 +3,7 @@
  */
 const path = require('path');
 const sharp = require('sharp');
-const mkdirp = require('make-dir');
+const fs = require('fs-extra');
 
 /**
  * Internal depedencies
@@ -13,7 +13,7 @@ const iconsPath = path.resolve(__dirname, '..', 'src', 'extensionIcons');
 const targetSizes = [16, 32, 48, 128];
 
 // Build extension icons.
-mkdirp(iconsPath).then(generateIcons);
+fs.ensureDir(iconsPath).then(generateIcons);
 
 /**
  * Generate extension icons.
@@ -21,13 +21,11 @@ mkdirp(iconsPath).then(generateIcons);
  * @since 1.4.0
  */
 function generateIcons() {
-  targetSizes.map((size) => {
+  targetSizes.forEach((size) => {
     sharp(svgPath)
       .png()
       .resize({ width: size, height: size })
       .toFile(`${iconsPath}/icon-${size}.png`)
-      .catch(function (err) {
-        console.log(err);
-      });
+      .catch(console.error);
   });
 }
